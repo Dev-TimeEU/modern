@@ -78,35 +78,32 @@ function abortHandler(event) {
   					              <td><?php if($row['price'] == "0"){ echo $this->lang->line('free'); }else{ echo $row['price']."€"; } ?></td>
   					              <td><?php if($theme == $row['theme']){ ?>
                             <button class="uk-button uk-button-secondary"><?= $this->lang->line('current'); ?></button>
-                          <?php }elseif($theme != $row['theme']){ ?>
+                          <?php }else{ ?>
                             <?php $files = directory_map('./application/views/themes/', 1, TRUE);
   					        	    asort($files);
-  					        	    foreach($files as $file){
-  				        			    if(is_string($file)){
-  					        	        if (ctype_lower($file)) {
-  					        	        }else{
-                                if($file == $row['theme']){
-                                $file = preg_replace('/([A-Za-z0-9\/\.\_\-]*)\//', '$1', $file); ?>
-                                  <button class="uk-button uk-button-success"><?= $this->lang->line('installed'); ?></button>
-                                <?php }else{
-                                $file = preg_replace('/([A-Za-z0-9\/\.\_\-]*)\//', '$1', $file); ?>
-                                <?php if($row['price'] == "0"){ ?>
-                                  <a href="https://github.com/Dev-TimeEU/<?= $row['theme']; ?>/archive/refs/heads/main.zip" class="uk-button uk-button-primary"><?= $this->lang->line('download'); ?></a>
-                                <?php }else{ ?>
-                                  <a href="<?= $row['url']; ?>" class="uk-button uk-button-primary"><?= $this->lang->line('pay'); ?></a>
-                                <?php } ?>
-
-                                <?php }
-                              }
-  					        	    	}
-  					        	    } ?>
-                          <?php }else{ ?>
-                            <?php if($row['price'] == "0"){ ?>
-                              <a href="https://github.com/Dev-TimeEU/<?= $row['theme']; ?>/archive/refs/heads/main.zip" class="uk-button uk-button-primary"><?= $this->lang->line('download'); ?></a>
-                            <?php }else{ ?>
-                              <a href="<?= $row['url']; ?>" class="uk-button uk-button-primary"><?= $this->lang->line('pay'); ?></a>
-                            <?php } ?>
-                          <?php } ?>
+                          foreach($files as $file){
+      				        			if(is_string($file)){
+      										if (ctype_lower($file)) {
+      										}elseif($file == "index.html"){
+                          }elseif($file == $row['theme']){
+                            $selected = '<button class="uk-button uk-button-secondary">'.$this->lang->line('current').'</button>';
+      										}else{
+                            if (file_exists(FCPATH."/application/views/themes/".$row['theme']."/")) {
+      											  $selected = '<button class="uk-button uk-button-success">'.$this->lang->line('installed').'</button>';
+                            }else{
+                              $selected = "";
+                            }
+      										}
+      					        		}
+      					        	} ?>
+                          <?php
+                          echo $selected;
+                          if($row['price'] == "0"){
+                            echo '<a href="https://github.com/Dev-TimeEU/'.$row['theme'].'/archive/refs/heads/main.zip" class="uk-button uk-button-primary">'.$this->lang->line('download').'</a>';
+                          }else{
+                            echo '<a href="'.$row['url'].'" class="uk-button uk-button-primary">'.$this->lang->line('pay').'</a>';
+                          } ?>
+                          <?php }  ?>
 								  </td>
   					          </tr>
 					    	  <?php } ?>
