@@ -95,11 +95,11 @@ function abortHandler(event) {
                           <td>
                             <?php if($row['theme'] != "default"){ ?>
                             <?php $info_theme = file_get_contents('https://raw.githubusercontent.com/Dev-TimeEU/'.$row['theme'].'/main/config.json');
-                            $info_theme = json_decode($info_theme, true); ?>
+                            $info_theme = json_decode($info_theme); ?>
                             <?= $info_theme->informations->version; ?>
                             <?php if (file_exists("./application/views/themes/".$row['theme']."/config.json")) {
                               $info_theme = file_get_contents($domain_url."/application/views/themes/".$row['theme']."/config.json");
-                              $info_theme = json_decode($info_theme, true);
+                              $info_theme = json_decode($info_theme);
                               echo "<br>".sprintf($this->lang->line('theme_version_installed'),$info_theme->informations->version);
                             } ?>
                           <?php }else{ ?>
