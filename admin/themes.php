@@ -19,6 +19,21 @@ function uploadFile() {
   //use file_upload_parser.php from above url
   ajax.send(formdata);
 }
+
+function Delete(theme) {
+  var file = _("file1").files[0];
+  // alert(file.name+" | "+file.size+" | "+file.type);
+  var formdata = new FormData();
+  formdata.append("theme", theme);
+  var ajax = new XMLHttpRequest();
+  ajax.upload.addEventListener("progress", progressHandler, false);
+  ajax.addEventListener("load", completeHandler, false);
+  ajax.addEventListener("error", errorHandler, false);
+  ajax.addEventListener("abort", abortHandler, false);
+  ajax.open("POST", "<?= $domain_url.'delete'; ?>");
+  //use file_upload_parser.php from above url
+  ajax.send(formdata);
+}
 function progressHandler(event) {
   var percent = (event.loaded / event.total) * 100;
   _("loaded_n_total").innerHTML = "<?= $this->lang->line('import_file__info'); ?> " + event.loaded + "/" + event.total+" ("+percent+"%)";
@@ -59,7 +74,8 @@ function abortHandler(event) {
   					              <th>#</th>
  					               <th><?= $this->lang->line('name'); ?></th>
                          <th></th>
-                         <th></th>
+                         <th><?= $this->lang->line('price_theme'); ?></th>
+                         <th><?= $this->lang->line('version_theme'); ?></th>
  					               <th><?= $this->lang->line('actions'); ?></th>
  					           </tr>
  					       </thead>
@@ -76,6 +92,21 @@ function abortHandler(event) {
                             <?php } ?>
                           </td>
   					              <td><?php if($row['price'] == "0"){ echo $this->lang->line('free'); }else{ echo $row['price']."€"; } ?></td>
+                          <td>
+                            <?php if($row['theme'] != "default"){ ?>
+                            <?php $info_theme = file_get_contents('https://raw.githubusercontent.com/Dev-TimeEU/'.$row['theme'].'/main/config.json');
+                            $info_theme = json_decode($info_theme, true); ?>
+                            <?= $info_theme->informations->version; ?>
+                            <?php if (file_exists("./application/views/themes/".$row['theme']."/config.json")) {
+                              $info_theme = file_get_contents($domain_url."/application/views/themes/".$row['theme']."/config.json");
+                              $info_theme = json_decode($info_theme, true);
+                              echo "<br>".sprintf($this->lang->line('theme_version_installed'),$info_theme->informations->version);
+                            } ?>
+                          <?php }else{ ?>
+                            N/A
+                          <?php } ?>
+                          </td>
+
   					              <td><?php if($theme == $row['theme']){ ?>
                             <button class="uk-button uk-button-secondary"><?= $this->lang->line('current'); ?></button>
                           <?php }else{ ?>
@@ -86,17 +117,20 @@ function abortHandler(event) {
       										if (ctype_lower($file)) {
       										}elseif($file == "index.html"){
                           }elseif($file == $row['theme']){
-                            $selected = '<button class="uk-button uk-button-secondary">'.$this->lang->line('current').'</button>';
+                            $selected0 = '<button class="uk-button uk-button-secondary">'.$this->lang->line('current').'</button>';
       										}else{
-                            if (file_exists(FCPATH."/application/views/themes/".$row['theme']."/")) {
-      											  $selected = '<button class="uk-button uk-button-success">'.$this->lang->line('installed').'</button>';
-                            }else{
-                              $selected = "";
-                            }
+                            $selected0 = "";
       										}
       					        		}
       					        	} ?>
                           <?php
+                          if (is_dir("./application/views/themes/".$row['theme'])) {
+                            $selected = '<button class="uk-button uk-button-success">'.$this->lang->line('installed').'</button>
+                            <button class="uk-button uk-button-danger" onclick="Delete(\''.$row['theme'].'\')">'.$this->lang->line('delete_theme').'</button>';
+                          }else{
+                            $selected = "";
+                          }
+                          echo $selected0;
                           echo $selected;
                           if($row['price'] == "0"){
                             echo '<a href="https://github.com/Dev-TimeEU/'.$row['theme'].'/archive/refs/heads/main.zip" class="uk-button uk-button-primary">'.$this->lang->line('download').'</a>';
