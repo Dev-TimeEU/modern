@@ -82,24 +82,27 @@ function abortHandler(event) {
  					       <tbody>
                    <?php $config__theme_json = file_get_contents('https://raw.githubusercontent.com/Dev-TimeEU/CMS_Portfolio/master/themes.json');
                    $themes = json_decode($config__theme_json, true);
-					    	  foreach ($themes['themes'] as $row){ ?>
+					    	  foreach ($themes['themes'] as $row){
+                    $version_text = ""; ?>
  					           <tr>
   					              <td><?= $row['id']; ?></td>
   					              <td><?= $row['theme']; ?></td>
   					              <td><?= $row['author']; ?>
                             <?php foreach ($row['author_contact'] as $author_contact){ ?>
-                              <?= $author_contact['name']; ?>: <?= $author_contact['response']; ?>
+                              <?= $author_contact['name']; ?>: <?= $author_contact['response']; ?><br>
                             <?php } ?>
                           </td>
   					              <td><?php if($row['price'] == "0"){ echo $this->lang->line('free'); }else{ echo $row['price']."€"; } ?></td>
                           <td>
                             <?php if($row['theme'] != "default"){ ?>
                             <?php $info_theme = file_get_contents('https://raw.githubusercontent.com/Dev-TimeEU/'.$row['theme'].'/main/config.json');
-                            $info_theme = json_decode($info_theme); ?>
-                            <?= $info_theme->informations->version; ?>
+                            $info_theme0 = json_decode($info_theme); ?>
+                            <?= $info_theme0->informations->version; ?>
                             <?php if (file_exists("./application/views/themes/".$row['theme']."/config.json")) {
                               $info_theme = file_get_contents($domain_url."/application/views/themes/".$row['theme']."/config.json");
                               $info_theme = json_decode($info_theme);
+                              $version_theme_downloaded = $info_theme->informations->version;
+                              $version_theme_latest = $info_theme0->informations->version;
                               echo "<br>".sprintf($this->lang->line('theme_version_installed'),$info_theme->informations->version);
                             } ?>
                           <?php }else{ ?>
@@ -118,6 +121,10 @@ function abortHandler(event) {
       										}elseif($file == "index.html"){
                           }elseif($file == $row['theme']){
                             $selected0 = '<button class="uk-button uk-button-secondary">'.$this->lang->line('current').'</button>';
+                            if($version_theme_latest != $version_theme_downloaded){
+                              $version_text = '<a href="https://github.com/Dev-TimeEU/'.$row['theme'].'/archive/refs/heads/main.zip" class="uk-button uk-button-default">
+                              '.$this->lang->line('download_update').'</a>';
+                            }
       										}else{
                             $selected0 = "";
       										}
@@ -127,11 +134,16 @@ function abortHandler(event) {
                           if (is_dir("./application/views/themes/".$row['theme'])) {
                             $selected = '<button class="uk-button uk-button-success">'.$this->lang->line('installed').'</button>
                             <button class="uk-button uk-button-danger" onclick="Delete(\''.$row['theme'].'\')">'.$this->lang->line('delete_theme').'</button>';
+                            if($version_theme_latest != $version_theme_downloaded){
+                              $version_text = '<a href="https://github.com/Dev-TimeEU/'.$row['theme'].'/archive/refs/heads/main.zip" class="uk-button uk-button-default">
+                              '.$this->lang->line('download_update').'</a>';
+                            }
                           }else{
                             $selected = "";
                           }
                           echo $selected0;
                           echo $selected;
+                          echo $version_text;
                           if($row['price'] == "0"){
                             echo '<a href="https://github.com/Dev-TimeEU/'.$row['theme'].'/archive/refs/heads/main.zip" class="uk-button uk-button-primary">'.$this->lang->line('download').'</a>';
                           }else{

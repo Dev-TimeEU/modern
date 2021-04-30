@@ -197,8 +197,6 @@ function Signup() {
                     <a class="uk-button uk-button-text" href="<?= $cv; ?>">CV</a>
                 </div>
 	        	<?php } ?>
-            <h5 class="bg-success" id="fab-not-enabled" style="display: none;">AdBlock is not enabled</h5>
-				<h5 class="bg-danger" id="fab-enabled" style="display: none;">AdBlock is enabled</h5>
             </div>
 
         </article>
@@ -319,40 +317,3 @@ function Signup() {
 		</div>
 	</div>
 </div>
-
-<script>
-		// Function called if AdBlock is not detected
-		function adBlockNotDetected() {
-			document.querySelector('#fab-enabled').style.display = 'none';
-			document.querySelector('#fab-not-enabled').style.display = 'block';
-		}
-		// Function called if AdBlock is detected
-		function adBlockDetected() {
-			document.querySelector('#fab-enabled').style.display = 'block';
-			document.querySelector('#fab-not-enabled').style.display = 'none';
-		}
-
-		// We look at whether FuckAdBlock already exists.
-		if(typeof fuckAdBlock !== 'undefined' || typeof FuckAdBlock !== 'undefined') {
-			// If this is the case, it means that something tries to usurp are identity
-			// So, considering that it is a detection
-			adBlockDetected();
-		} else {
-			// Otherwise, you import the script FuckAdBlock
-			var importFAB = document.createElement('script');
-			importFAB.onload = function() {
-				// If all goes well, we configure FuckAdBlock
-				fuckAdBlock.onDetected(adBlockDetected)
-				fuckAdBlock.onNotDetected(adBlockNotDetected);
-			};
-			importFAB.onerror = function() {
-				// If the script does not load (integrity problem, ...)
-				// Then a detection is triggered
-				adBlockDetected();
-			};
-			importFAB.integrity = 'sha256-4/8cdZfUJoNm8DLRzuKwvhusQbdUqVov+6bVj9ewL7U=';
-			importFAB.crossOrigin = 'anonymous';
-			importFAB.src = 'https://cdnjs.cloudflare.com/ajax/libs/fuckadblock/3.2.1/fuckadblock.js';
-			document.head.appendChild(importFAB);
-		}
-	</script>
