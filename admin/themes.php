@@ -94,7 +94,6 @@ function abortHandler(event) {
                           </td>
   					              <td><?php if($row['price'] == "0"){ echo $this->lang->line('free'); }else{ echo $row['price']."€"; } ?></td>
                           <td>
-                            <?php if($row['theme'] != "default"){ ?>
                             <?php $info_theme = file_get_contents('https://raw.githubusercontent.com/Dev-TimeEU/'.$row['theme'].'/main/config.json');
                             $info_theme0 = json_decode($info_theme); ?>
                             <?= $info_theme0->informations->version; ?>
@@ -105,9 +104,6 @@ function abortHandler(event) {
                               $version_theme_latest = $info_theme0->informations->version;
                               echo "<br>".sprintf($this->lang->line('theme_version_installed'),$info_theme->informations->version);
                             } ?>
-                          <?php }else{ ?>
-                            N/A
-                          <?php } ?>
                           </td>
 
   					              <td><?php if($theme == $row['theme']){ ?>
@@ -144,10 +140,12 @@ function abortHandler(event) {
                           echo $selected0;
                           echo $selected;
                           echo $version_text;
-                          if($row['price'] == "0"){
+                          if($row['price'] == "0" && $version_theme_latest == $version_theme_downloaded){
                             echo '<a href="https://github.com/Dev-TimeEU/'.$row['theme'].'/archive/refs/heads/main.zip" class="uk-button uk-button-primary">'.$this->lang->line('download').'</a>';
-                          }else{
+                          }elseif($row['price'] != "0"){
                             echo '<a href="'.$row['url'].'" class="uk-button uk-button-primary">'.$this->lang->line('pay').'</a>';
+                          }else{
+                            
                           } ?>
                           <?php }  ?>
 								  </td>
